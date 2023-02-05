@@ -2,6 +2,10 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.12.1
 
+slack-fail-post-step: &slack-fail-post-step
+  post-steps:
+    - slack/status:
+        fail_only: true
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -129,8 +133,8 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
+      - build-frontend: *slack-fail-post-step
+      - build-backend: *slack-fail-post-step
       - test-frontend:
           requires: [build-frontend]
       - test-backend:
