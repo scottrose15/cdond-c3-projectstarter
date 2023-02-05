@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  slack: circleci/slack@4.12.1
 
 commands:
   destroy-environment:
@@ -103,10 +105,11 @@ jobs:
       - restore_cache:
           keys: [frontend-build]
       - run:
-          name: front-end test
+          name: front-end scan
           command: |
             cd frontend
             npm install
+            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
 
@@ -118,10 +121,11 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: back-end test
+          name: back-end scan
           command: |
             cd backend
             npm install
+            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
 
