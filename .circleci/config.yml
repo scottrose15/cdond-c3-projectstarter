@@ -159,13 +159,36 @@ jobs:
           name: Add back-end ip to ansible inventory
           root: ~/
           command: |
-            echo "[all]" > cdond-c3-projectstarter/.circleci/ansible/inventory.txt
-            aws ec2 describe-instances --filters 'Name=tag:Name,Values=backend-*' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> cdond-c3-projectstarter/.circleci/ansible/inventory.txt
+            echo "[all]" > .circleci/ansible/inventory.txt
+            aws ec2 describe-instances --filters 'Name=tag:Name,Values=backend-*' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - cdond-c3-projectstarter/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
+            - .circleci/ansible/inventory.txt
+    - destroy-environment
+
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["cc:12:21:76:da:2a:c2:94:3f:7c:60:61:26:21:ba:60"]
+      # Add ssh keys with fingerprint
+      # attach workspace
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible 
+            apk add --update tar 
+            apk add --update gzip 
+            apk add --update awscli 
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+    - destroy-environment
 
 workflows:
   default:
@@ -182,3 +205,5 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
