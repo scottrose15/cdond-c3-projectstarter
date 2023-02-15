@@ -162,8 +162,9 @@ jobs:
             echo "[all]" > .circleci/ansible/inventory.txt
             aws ec2 describe-instances --filters 'Name=tag:Name,Values=backend-*' --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
+          root: ~/
           paths:
-            - .circleci/ansible/inventory.txt
+            - cdond-c3-projectstarter/.circleci/ansible/inventory.txt
       - destroy-environment
 
   configure-infrastructure:
