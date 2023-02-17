@@ -196,7 +196,6 @@ jobs:
           command: |
             yum -y install python3 python-pip
             yum -y install nodejs npm
-            pip install --upgrade pip
       - run:
           name: Run migrations
           command: |
