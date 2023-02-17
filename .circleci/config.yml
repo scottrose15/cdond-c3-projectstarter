@@ -235,7 +235,7 @@ jobs:
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
-      - revert_migrations
+      - revert-migrations
 
 workflows:
   default:
@@ -246,7 +246,7 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      - scan-backend:
+      - scagitn-backend:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
