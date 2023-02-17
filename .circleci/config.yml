@@ -213,13 +213,13 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
             amazon-linux-extras enable ansible2
             yum install -y tar gzip ansible
-      - attach_workspace:
-          at: ~
       - run:
           name: Get backend url
           command: |
