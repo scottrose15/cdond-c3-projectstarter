@@ -40,8 +40,8 @@ commands:
       - run:
           name: Install AWS CLI
           command: |
-            apt update
-            apt -y install unzip
+            sudo apt update
+            sudo apt -y install unzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
@@ -230,10 +230,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt install software-properties-common -y
-            add-apt-repository --yes --update ppa:ansible/ansible
-            apt install ansible2 -y
-            yum install -y tar gzip ansible python3 python-pip
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible2 -y
+            sudo apt install -y tar gzip ansible python3 python-pip
       - attach_workspace:
           at: ~/
       - run:
