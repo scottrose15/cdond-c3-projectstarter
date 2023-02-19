@@ -192,7 +192,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name: Run Migrations
           command: |
             yum update
             yum -y install python3 python-pip
@@ -203,9 +203,6 @@ jobs:
             source ~/.bashrc
             nvm install v16.19.0
             source ~/.bashrc
-      - run:
-          name: Run migrations
-          command: |
             cd backend
             npm install
             # Run and save the migration output
