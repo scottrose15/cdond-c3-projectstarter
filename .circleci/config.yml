@@ -197,8 +197,9 @@ jobs:
             yum update
             yum -y install python3 python-pip
             yum -y install epel-release
-            yum -y install nodejs
-            yum -y install npm
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+            source ~/.bashrc
+            nvm install v16.19.0
       - run:
           name: Run migrations
           command: |
