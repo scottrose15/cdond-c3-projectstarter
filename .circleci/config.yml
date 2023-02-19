@@ -196,6 +196,8 @@ jobs:
           command: |
             yum update
             yum -y install python3 python-pip
+            touch ~/.bashrc
+            chmod 777 ~/.bashrc
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
             source ~/.bashrc
             nvm install v16.19.0
