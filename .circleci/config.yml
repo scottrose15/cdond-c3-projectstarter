@@ -33,6 +33,22 @@ commands:
               npm install
               npm run migration:revert
             fi
+
+  install-npm:
+    description: Install npm from nvm
+    steps:
+      - run:
+          name: install npm
+          command: |
+            yum update
+            yum -y install python3 python-pip
+            yum -y install tar gzip
+            touch ~/.bashrc
+            chmod 777 ~/.bashrc
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+            source ~/.bashrc
+            nvm install v16.19.0
+            source ~/.bashrc
             
 jobs:
   build-frontend:
@@ -191,18 +207,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - install-npm
       - run:
           name: Run Migrations
           command: |
-            yum update
-            yum -y install python3 python-pip
-            yum -y install tar gzip
-            touch ~/.bashrc
-            chmod 777 ~/.bashrc
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
-            source ~/.bashrc
-            nvm install v16.19.0
-            source ~/.bashrc
             cd backend
             npm install
             # Run and save the migration output
@@ -222,13 +230,14 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             amazon-linux-extras enable ansible2
             yum install -y tar gzip ansible python3 python-pip
+      - install-npm
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
