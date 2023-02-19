@@ -34,21 +34,17 @@ commands:
               npm run migration:revert
             fi
 
-  install-npm:
-    description: Install npm from nvm
+  install-aws-cli:
+    description: Install AWS CLI
     steps:
       - run:
-          name: install npm
+          name: Install AWS CLI
           command: |
             yum update
-            yum -y install python3 python-pip
-            yum -y install tar gzip
-            touch ~/.bashrc
-            chmod 777 ~/.bashrc
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
-            source ~/.bashrc
-            nvm install v16.19.0
-            source ~/.bashrc
+            yum -y install unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
             
 jobs:
   build-frontend:
@@ -204,10 +200,10 @@ jobs:
 
   run-migrations:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - install-npm
+      - install-aws-cli
       - run:
           name: Run Migrations
           command: |
@@ -227,15 +223,15 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/node:13.8.0
     steps:
       - checkout
+      - install-aws-cli
       - run:
           name: Install dependencies
           command: |
             amazon-linux-extras enable ansible2
             yum install -y tar gzip ansible python3 python-pip
-      - install-npm
       - attach_workspace:
           at: ~/
       - run:
