@@ -258,7 +258,6 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - install-aws-cli
-      - checkout
       - add_ssh_keys:
           fingerprints: ["cc:12:21:76:da:2a:c2:94:3f:7c:60:61:26:21:ba:60"]
       - attach_workspace:
