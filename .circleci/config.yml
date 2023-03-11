@@ -234,8 +234,7 @@ jobs:
           command: |
             sudo apt -y install software-properties-common
             sudo apt-add-repository ppa:ansible/ansible
-            sudo apt -y install ansible
-            sudo apt install -y tar gzip ansible python3 python-pip
+            sudo apt install -y tar gzip python3 python-pip ansible
       - attach_workspace:
           at: ~/
       - run:
