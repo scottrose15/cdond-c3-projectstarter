@@ -233,8 +233,7 @@ jobs:
           name: Install dependencies
           command: |
             sudo apt -y install software-properties-common
-            sudo apt-add-repository -y ppa:ansible/ansible
-            sudo apt install -y tar gzip python3 python-pip ansible
+            sudo apt install -y tar gzip python3 python-pip
       - attach_workspace:
           at: ~/
       - run:
@@ -251,6 +250,40 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment
+      - revert-migrations
+
+  deploy-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - install-aws-cli
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["cc:12:21:76:da:2a:c2:94:3f:7c:60:61:26:21:ba:60"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt -y install software-properties-common
+            sudo apt-add-repository -y ppa:ansible/ansible
+            sudo apt install -y tar gzip python3 python-pip ansible      
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            mkdir .circleci/ansible/roles/deploy/artifacts
+            chmod 755 .circleci/ansible/roles/deploy/artifacts
+            cd .circleci/ansible/roles/deploy/artifacts
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations
 
@@ -277,3 +310,5 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
+      - deploy-backend:
+          requires: [deploy-frontend]
